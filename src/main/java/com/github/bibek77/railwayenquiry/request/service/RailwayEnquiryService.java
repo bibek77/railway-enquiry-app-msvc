@@ -27,6 +27,7 @@ public class RailwayEnquiryService {
     @Autowired
     RestTemplateClient restTemplate;
 
+    @SuppressWarnings({"unchecked", "rawtypes"})
     public Object getPNRStatus(String pnr) {
 
         Object getPnrStatusResponse = new Object();
@@ -35,12 +36,12 @@ public class RailwayEnquiryService {
             HttpHeaders httpHeaders = new HttpHeaders();
             httpHeaders.add("X-RapidAPI-Host", "pnr-status-indian-railway.p.rapidapi.com");
             httpHeaders.add("X-RapidAPI-Key", pnr_enquiry_apiKey);
-            HttpEntity<String> request = new HttpEntity(null, httpHeaders);
+            HttpEntity<String> request = new HttpEntity<>(null, httpHeaders);
             getPnrStatusResponse = restTemplate.restTemplate().exchange(pnr_enquiry_url, HttpMethod.GET, request, Object.class, pnr).getBody();
 
             Map<String, String> pnrResponseMap = (Map<String, String>) getPnrStatusResponse;
 
-            if (pnrResponseMap.containsKey("error")) {
+            if (pnrResponseMap != null && pnrResponseMap.containsKey("error")) {
                 log.error("Pnr does not exists in the Railway System : " + pnr);
             }
         } catch (Exception e) {
