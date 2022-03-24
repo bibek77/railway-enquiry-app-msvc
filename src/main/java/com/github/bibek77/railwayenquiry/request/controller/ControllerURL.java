@@ -7,4 +7,5 @@ public interface ControllerURL {
 
     String CUSTOM_HEALTH_CHECK_API = "/v1.0/railapi/health";
     String PNR_RAILWAY_ENQUIRY_API = "/v1.0/railapi/pnr/{pnr}";
+    String GET_TRAIN_DETAILS = "/v1.0/railapi/train/details";
 }
