@@ -9,6 +9,8 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Service;
 
+import java.util.Map;
+
 /**
  * @author bibek
  */
@@ -35,6 +37,12 @@ public class RailwayEnquiryService {
             httpHeaders.add("X-RapidAPI-Key", pnr_enquiry_apiKey);
             HttpEntity<String> request = new HttpEntity(null, httpHeaders);
             getPnrStatusResponse = restTemplate.restTemplate().exchange(pnr_enquiry_url, HttpMethod.GET, request, Object.class, pnr).getBody();
+
+            Map<String, String> pnrResponseMap = (Map<String, String>) getPnrStatusResponse;
+
+            if (pnrResponseMap.containsKey("error")) {
+                log.error("Pnr does not exists in the Railway System : " + pnr);
+            }
         } catch (Exception e) {
             log.error("Exception Generated while connecting to PNR Railway Rapid API : " + e.getMessage());
         }
