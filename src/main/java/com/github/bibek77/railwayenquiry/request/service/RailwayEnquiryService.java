@@ -1,5 +1,8 @@
 package com.github.bibek77.railwayenquiry.request.service;
 
+import com.github.bibek77.railwayenquiry.exception.DataNotFoundException;
+import com.github.bibek77.railwayenquiry.exception.ExceptionEnums;
+import com.github.bibek77.railwayenquiry.exception.ServerErrorException;
 import com.github.bibek77.railwayenquiry.request.controller.RestTemplateClient;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -8,6 +11,7 @@ import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.HttpClientErrorException;
 
 import java.util.HashMap;
 import java.util.List;
@@ -48,9 +52,11 @@ public class RailwayEnquiryService {
 
             if (pnrResponseMap != null && pnrResponseMap.containsKey("error")) {
                 log.error("Pnr does not exists in the Railway System : " + pnr);
+                throw new DataNotFoundException(ExceptionEnums.DataNotFound.getMessage(), ExceptionEnums.DataNotFound.getDescription());
             }
-        } catch (Exception e) {
+        } catch (HttpClientErrorException e) {
             log.error("Exception Generated while connecting to PNR Railway Rapid API : " + e.getMessage());
+            throw new ServerErrorException(ExceptionEnums.InternalServerError.getMessage(), ExceptionEnums.InternalServerError.getDescription());
         }
         return getPnrStatusResponse;
     }
@@ -73,9 +79,11 @@ public class RailwayEnquiryService {
 
             if (trainDetailsResponseMap != null && trainDetailsResponseMap.size() == 0) {
                 log.error("Train Details does not exists in the Railway System : " + train);
+                throw new DataNotFoundException(ExceptionEnums.DataNotFound.getMessage(), ExceptionEnums.DataNotFound.getDescription());
             }
-        } catch (Exception e) {
+        } catch (HttpClientErrorException e) {
             log.error("Exception Generated while connecting to Train Details Railway Rapid API : " + e.getMessage());
+            throw new ServerErrorException(ExceptionEnums.InternalServerError.getMessage(), ExceptionEnums.InternalServerError.getDescription());
         }
         return trainDetailsResponse;
     }
